@@ -27,10 +27,13 @@ public class Transaction {
     private Double amount;
 
     @Enumerated(EnumType.STRING)
-    private TransactionType type;
+    private TransactionType transactionType;
 
     private String description;
 
     @ManyToOne
-    private User user;
+    private BankAccount sender;
+
+    @ManyToOne
+    private BankAccount receiver;
 }

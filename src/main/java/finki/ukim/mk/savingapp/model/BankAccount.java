@@ -11,23 +11,18 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Bank {
+public class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    private String address;
-
     private double balance;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToMany(mappedBy = "bank")
-    private List<Budget> budget;
 
     @OneToMany(mappedBy = "bank")
     private List<Expense> expenses;

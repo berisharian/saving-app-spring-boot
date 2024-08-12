@@ -1,10 +1,13 @@
 package finki.ukim.mk.savingapp.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import finki.ukim.mk.savingapp.model.enumeration.BudgetStatus;
+import finki.ukim.mk.savingapp.model.enumeration.SavingsPeriod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,13 +30,21 @@ public class SavingsTarget {
 
     private Double targetAmount;
 
+    private Double savingAmount;
+
+    @Enumerated(EnumType.STRING)
+    private SavingsPeriod savingsPeriod;
+
     private String description;
 
     private LocalDateTime createdAt;
+
+    private BudgetStatus status;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDate dueDate;
 
     private LocalDateTime updatedAt;
+
 
 }

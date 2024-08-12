@@ -28,13 +28,9 @@ public class Expense {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDate date;
 
-    @ManyToOne
-    @JoinColumn(name= "budget_id")
-    private Budget budget;
-
     private String paymentMethod;
 
     @ManyToOne
-    private Bank bank;
+    private BankAccount bank;
 
 }
