@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-4">Expenses</h1>
+            <a href="/expenses/add" class="btn btn-primary mb-3">Add Expense</a>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Payment Method</th>
+                    <th>Bank Account</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="expense : ${expenses}">
+                    <td th:text="${expense.id}"></td>
+                    <td th:text="${expense.name}"></td>
+                    <td th:text="${expense.amount}"></td>
+                    <td th:text="${expense.category}"></td>
+                    <td th:text="${expense.date}"></td>
+                    <td th:text="${expense.paymentMethod}"></td>
+                    <td th:text="${expense.bank.name}"></td>
+                    <td>
+                        <a th:href="@{/expenses/details/{id}(id=${expense.id})}" class="btn btn-info">Details</a>
+                        <a th:href="@{/expenses/edit/{id}(id=${expense.id})}" class="btn btn-warning">Edit</a>
+                        <form th:action="@{/expenses/delete/{id}(id=${expense.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

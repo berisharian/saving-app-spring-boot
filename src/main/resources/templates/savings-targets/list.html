@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings Targets</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-4">Savings Targets</h1>
+            <a href="/savings-targets/add" class="btn btn-primary mb-3">Add Savings Target</a>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Current Amount</th>
+                    <th>Target Amount</th>
+                    <th>Saving Amount</th>
+                    <th>Period</th>
+                    <th>Description</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="target : ${savingsTargets}">
+                    <td th:text="${target.id}"></td>
+                    <td th:text="${target.name}"></td>
+                    <td th:text="${target.currentAmount}"></td>
+                    <td th:text="${target.targetAmount}"></td>
+                    <td th:text="${target.savingAmount}"></td>
+                    <td th:text="${target.savingsPeriod}"></td>
+                    <td th:text="${target.description}"></td>
+                    <td th:text="${target.dueDate}"></td>
+                    <td th:text="${target.status}"></td>
+                    <td>
+                        <a th:href="@{/savings-targets/details/{id}(id=${target.id})}" class="btn btn-info">Details</a>
+                        <a th:href="@{/savings-targets/edit/{id}(id=${target.id})}" class="btn btn-warning">Edit</a>
+                        <form th:action="@{/savings-targets/delete/{id}(id=${target.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

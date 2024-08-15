@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Details</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-4">Expense Details</h1>
+            <dl class="row">
+                <dt class="col-sm-3">ID</dt>
+                <dd class="col-sm-9" th:text="${expense.id}"></dd>
+
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9" th:text="${expense.name}"></dd>
+
+                <dt class="col-sm-3">Amount</dt>
+                <dd class="col-sm-9" th:text="${expense.amount}"></dd>
+
+                <dt class="col-sm-3">Category</dt>
+                <dd class="col-sm-9" th:text="${expense.category}"></dd>
+
+                <dt class="col-sm-3">Date</dt>
+                <dd class="col-sm-9" th:text="${expense.date}"></dd>
+
+                <dt class="col-sm-3">Payment Method</dt>
+                <dd class="col-sm-9" th:text="${expense.paymentMethod}"></dd>
+
+                <dt class="col-sm-3">Bank Account</dt>
+                <dd class="col-sm-9" th:text="${expense.bank.name}"></dd>
+            </dl>
+            <a href="/expenses/edit/{id}" th:href="@{/expenses/edit/{id}(id=${expense.id})}" class="btn btn-warning">Edit</a>
+            <a href="/expenses" class="btn btn-primary">Back to List</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savings Target Details</title>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="mb-4">Savings Target Details</h1>
+            <dl class="row">
+                <dt class="col-sm-3">ID</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.id}"></dd>
+
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.name}"></dd>
+
+                <dt class="col-sm-3">Current Amount</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.currentAmount}"></dd>
+
+                <dt class="col-sm-3">Target Amount</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.targetAmount}"></dd>
+
+                <dt class="col-sm-3">Saving Amount</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.savingAmount}"></dd>
+
+                <dt class="col-sm-3">Period</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.savingsPeriod}"></dd>
+
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.description}"></dd>
+
+                <dt class="col-sm-3">Due Date</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.dueDate}"></dd>
+
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9" th:text="${savingsTarget.status}"></dd>
+            </dl>
+            <a href="/savings-targets" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savings Target Form</title>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h1 class="mb-4">Savings Target Form</h1>
+      <form th:action="@{${savingsTarget != null} ? '/savings-targets/edit/' + ${savingsTarget.id} : '/savings-targets/add'}" method="post">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" id="name" name="name" class="form-control" th:value="${savingsTarget?.name}" required>
+        </div>
+        <div class="mb-3">
+          <label for="currentAmount" class="form-label">Current Amount</label>
+          <input type="number" step="0.01" id="currentAmount" name="currentAmount" class="form-control" th:value="${savingsTarget?.currentAmount}" required>
+        </div>
+        <div class="mb-3">
+          <label for="targetAmount" class="form-label">Target Amount</label>
+          <input type="number" step="0.01" id="targetAmount" name="targetAmount" class="form-control" th:value="${savingsTarget?.targetAmount}" required>
+        </div>
+        <div class="mb-3">
+          <label for="savingAmount" class="form-label">Saving Amount</label>
+          <input type="number" step="0.01" id="savingAmount" name="savingAmount" class="form-control" th:value="${savingsTarget?.savingAmount}" required>
+        </div>
+        <div class="mb-3">
+          <label for="savingsPeriod" class="form-label">Savings Period</label>
+          <select id="savingsPeriod" name="savingsPeriod" class="form-select" required>
+            <option th:each="period : ${savingsPeriods}" th:value="${period}" th:text="${period}"></option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea id="description" name="description" class="form-control" rows="3" th:text="${savingsTarget?.description}"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="dueDate" class="form-label">Due Date</label>
+          <input type="date" id="dueDate" name="dueDate" class="form-control" th:value="${savingsTarget?.dueDate}"/>
+        </div>
+        <div class="mb-3">
+          <label for="status" class="form-label">Status</label>
+          <select id="status" name="status" class="form-select" required>
+            <option th:each="status : ${savingsStatuses}" th:value="${status}" th:text="${status}"></option>
+          </select>
+        </div>
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <a href="/savings-targets" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

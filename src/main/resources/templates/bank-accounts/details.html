@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Account Details</title>
+</head>
+<body>
+<div class="container mt-4">
+    <h1 class="mb-4">Bank Account Details</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Account ID: <span th:text="${bankAccount.id}"></span></h5>
+            <dl class="row">
+                <dt class="col-sm-3">Name:</dt>
+                <dd class="col-sm-9" th:text="${bankAccount.name}"></dd>
+
+                <dt class="col-sm-3">Balance:</dt>
+                <dd class="col-sm-9" th:text="${bankAccount.balance}"></dd>
+
+                <dt class="col-sm-3">User:</dt>
+                <dd class="col-sm-9" th:text="${bankAccount.user.name}"></dd>
+            </dl>
+            <a href="#" th:href="@{/bank-accounts/edit/{id}(id=${bankAccount.id})}" class="btn btn-warning">Edit</a>
+            <a href="#" th:href="@{/bank-accounts}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
