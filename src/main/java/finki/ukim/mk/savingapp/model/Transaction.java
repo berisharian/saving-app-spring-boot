@@ -36,4 +36,14 @@ public class Transaction {
 
     @ManyToOne
     private BankAccount receiver;
+
+    public Transaction(String transactionTitle, LocalDateTime dateTime, Double amount, TransactionType transactionType, String description, BankAccount sender, BankAccount receiver) {
+        this.transactionTitle = transactionTitle;
+        this.dateTime = dateTime;
+        this.amount = amount;
+        this.transactionType = transactionType;
+        this.description = description;
+        this.sender = sender;
+        this.receiver = receiver;
+    }
 }
