@@ -1,8 +1,13 @@
 package finki.ukim.mk.savingapp.web;
 
 import finki.ukim.mk.savingapp.model.BankAccount;
+import finki.ukim.mk.savingapp.model.User;
 import finki.ukim.mk.savingapp.service.BankAccountService;
+import finki.ukim.mk.savingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +19,10 @@ import java.util.List;
 public class BankAccountController {
 
     private final BankAccountService bankAccountService;
-
-    public BankAccountController(BankAccountService bankAccountService) {
+    private final UserService userService;
+    public BankAccountController(BankAccountService bankAccountService, UserService userService) {
         this.bankAccountService = bankAccountService;
+        this.userService = userService;
     }
 
 
@@ -44,9 +50,24 @@ public class BankAccountController {
 
     @PostMapping("/add")
     public String addBankAccount(@RequestParam String name,
-                                 @RequestParam double balance,
-                                 @RequestParam Long userId) {
-        bankAccountService.createBankAccount(name, balance, userId);
+                                 @RequestParam double balance
+                                 ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            username = userDetails.getUsername();
+        }
+
+        if (username != null) {
+            // Find the user by username (email)
+            User user = (User) userService.loadUserByUsername(username);
+            if (user != null) {
+                bankAccountService.createBankAccount(name, balance, user.getUsername());
+                return "redirect:/bank-accounts";
+            }
+        }
         return "redirect:/bank-accounts";
     }
 

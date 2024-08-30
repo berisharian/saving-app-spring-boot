@@ -10,6 +10,7 @@ import finki.ukim.mk.savingapp.service.BankAccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.util.List;
 
 @Service
@@ -35,10 +36,10 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     @Transactional
-    public BankAccount createBankAccount(String name, double balance, Long userId) {
+    public BankAccount createBankAccount(String name, double balance, String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
-
+//
         BankAccount bankAccount = new BankAccount();
         bankAccount.setName(name);
         bankAccount.setBalance(balance);
@@ -65,4 +66,18 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccountRepository.delete(bankAccount);
     }
 
+    @Override
+    public void updateAmount(BankAccount bankAccount, Double amount) {
+        BankAccount currentBankAccount = this.findById(bankAccount.getId());
+        double balance = currentBankAccount.getBalance();
+        currentBankAccount.setBalance(balance-amount);
+    }
+    @Override
+    public BankAccount getBankAccount(Long id) {
+        return bankAccountRepository.findById(id).orElse(null);
+    }
+    @Override
+    public BankAccount findByUser(User user) {
+        return bankAccountRepository.findByUser(user);
+    }
 }

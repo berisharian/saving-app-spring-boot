@@ -41,12 +41,12 @@
           <label for="dueDate" class="form-label">Due Date</label>
           <input type="date" id="dueDate" name="dueDate" class="form-control" th:value="${savingsTarget?.dueDate}"/>
         </div>
-        <div class="mb-3">
-          <label for="status" class="form-label">Status</label>
-          <select id="status" name="status" class="form-select" required>
-            <option th:each="status : ${savingsStatuses}" th:value="${status}" th:text="${status}"></option>
-          </select>
-        </div>
+<!--        <div class="mb-3">-->
+<!--          <label for="status" class="form-label">Status</label>-->
+<!--          <select id="status" name="status" class="form-select" required>-->
+<!--            <option th:each="status : ${savingsStatuses}" th:value="${status}" th:text="${status}"></option>-->
+<!--          </select>-->
+<!--        </div>-->
         <div class="text-end">
           <button type="submit" class="btn btn-primary">Submit</button>
           <a href="/savings-targets" class="btn btn-secondary">Cancel</a>

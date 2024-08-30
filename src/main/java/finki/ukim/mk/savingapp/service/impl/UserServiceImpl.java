@@ -1,70 +1,57 @@
 package finki.ukim.mk.savingapp.service.impl;
 
+import finki.ukim.mk.savingapp.model.BankAccount;
+import finki.ukim.mk.savingapp.model.SavingsTarget;
 import finki.ukim.mk.savingapp.model.User;
 import finki.ukim.mk.savingapp.model.exception.UserNotFoundException;
 import finki.ukim.mk.savingapp.repository.UserRepository;
 import finki.ukim.mk.savingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public List<User> listAll() {
-        return userRepository.findAll();
-    }
+    public User register(String username, String password, String name, String surname, String phone) {
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+            throw new RuntimeException("Bad Credentials");
+        }
 
-    @Override
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-    }
+        if(this.userRepository.findByUsername(username).isPresent()) {
+            throw new RuntimeException("User already exists");
+        }
 
-    @Override
-    public User findByEmail(String email) {
-        return userRepository.findUserByEmail(email);
-    }
-
-    @Override
-    public User createUser(String name, String surname, String email, String password, String phone, LocalDate birthDate) {
-        User user = new User();
-        user.setName(name);
-        user.setSurname(surname);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setPhone(phone);
-        user.setBirthDate(birthDate);
+        User user = new User(
+                username,
+                name,
+                surname,
+                passwordEncoder.encode(password),
+                phone,
+                null
+        );
 
         return userRepository.save(user);
     }
 
     @Override
-    public User updateUser(Long id, String name, String surname, String email, String password, String phone, LocalDate birthDate) {
-        User user = findById(id);
-        user.setName(name);
-        user.setSurname(surname);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setPhone(phone);
-        user.setBirthDate(birthDate);
-
-        return userRepository.save(user);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException(username));
     }
 
-    @Override
-    public void delete(Long id) {
-        User user = findById(id);
-        userRepository.delete(user);
-    }
 }
+

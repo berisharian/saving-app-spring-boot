@@ -22,14 +22,14 @@
     <tbody>
     <!-- Loop through bankAccounts and display them -->
     <tr th:each="bankAccount : ${bankAccounts}">
-      <td th:text="${bankAccount.id}"></td>
-      <td th:text="${bankAccount.name}"></td>
-      <td th:text="${bankAccount.balance}"></td>
-      <td th:text="${bankAccount.user.name}"></td>
+      <td th:text="${bankAccount?.id}"></td>
+      <td th:text="${bankAccount?.name}"></td>
+      <td th:text="${bankAccount?.balance}"></td>
+      <td th:text="${bankAccount?.user?.name}"></td>
       <td>
-        <a href="#" th:href="@{/bank-accounts/details/{id}(id=${bankAccount.id})}" class="btn btn-info btn-sm">Details</a>
-        <a href="#" th:href="@{/bank-accounts/edit/{id}(id=${bankAccount.id})}" class="btn btn-warning btn-sm">Edit</a>
-        <form th:action="@{/bank-accounts/delete/{id}(id=${bankAccount.id})}" method="post" style="display:inline;">
+        <a href="#" th:href="@{/bank-accounts/details/{id}(id=${bankAccount?.id})}" class="btn btn-info btn-sm">Details</a>
+        <a href="#" th:href="@{/bank-accounts/edit/{id}(id=${bankAccount?.id})}" class="btn btn-warning btn-sm">Edit</a>
+        <form th:action="@{/bank-accounts/delete/{id}(id=${bankAccount?.id})}" method="post" style="display:inline;">
           <button type="submit" class="btn btn-danger btn-sm">Delete</button>
         </form>
       </td>

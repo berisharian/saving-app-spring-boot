@@ -1,11 +1,16 @@
 package finki.ukim.mk.savingapp.web;
 
 import finki.ukim.mk.savingapp.model.SavingsTarget;
+import finki.ukim.mk.savingapp.model.User;
 import finki.ukim.mk.savingapp.model.enumeration.BudgetStatus;
 import finki.ukim.mk.savingapp.model.enumeration.SavingsPeriod;
 import finki.ukim.mk.savingapp.model.exception.SavingsTargetNotFoundException;
 import finki.ukim.mk.savingapp.service.SavingsTargetService;
+import finki.ukim.mk.savingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +22,12 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/savings-targets")
 public class SavingsTargetController {
-
+    private final UserService userService;
     private final SavingsTargetService savingsTargetService;
 
     @Autowired
-    public SavingsTargetController(SavingsTargetService savingsTargetService) {
+    public SavingsTargetController(UserService userService, SavingsTargetService savingsTargetService) {
+        this.userService = userService;
         this.savingsTargetService = savingsTargetService;
     }
 
@@ -57,7 +63,23 @@ public class SavingsTargetController {
                                    @RequestParam SavingsPeriod savingsPeriod,
                                    @RequestParam String description,
                                    @RequestParam LocalDate dueDate) {
-        savingsTargetService.create(name, currentAmount, targetAmount, savingAmount, savingsPeriod, description, dueDate);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            username = userDetails.getUsername();
+        }
+
+        if (username != null) {
+            // Find the user by username (email)
+            User user = (User) userService.loadUserByUsername(username);
+            if (user != null) {
+                savingsTargetService.create(name, currentAmount, targetAmount, savingAmount, savingsPeriod, description, dueDate, user.getUsername());
+                return "redirect:/bank-accounts";
+            }
+        }
+
         return "redirect:/savings-targets";
     }
 

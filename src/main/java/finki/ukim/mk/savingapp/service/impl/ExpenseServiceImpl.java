@@ -57,6 +57,8 @@ public class ExpenseServiceImpl implements ExpenseService {
         expense.setPaymentMethod(paymentMethod);
         expense.setBank(bankAccount);
 
+        bankAccountService.updateAmount(bankAccount, amount);
+
         return expenseRepository.save(expense);
     }
 

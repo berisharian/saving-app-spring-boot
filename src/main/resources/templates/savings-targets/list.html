@@ -30,13 +30,13 @@
                 <tr th:each="target : ${savingsTargets}">
                     <td th:text="${target.id}"></td>
                     <td th:text="${target.name}"></td>
-                    <td th:text="${target.currentAmount}"></td>
+                    <td th:text="${target.getPeriodicalAmount()}"></td>
                     <td th:text="${target.targetAmount}"></td>
                     <td th:text="${target.savingAmount}"></td>
                     <td th:text="${target.savingsPeriod}"></td>
                     <td th:text="${target.description}"></td>
                     <td th:text="${target.dueDate}"></td>
-                    <td th:text="${target.status}"></td>
+                    <td th:text="${target.getStatus()}"></td>
                     <td>
                         <a th:href="@{/savings-targets/details/{id}(id=${target.id})}" class="btn btn-info">Details</a>
                         <a th:href="@{/savings-targets/edit/{id}(id=${target.id})}" class="btn btn-warning">Edit</a>

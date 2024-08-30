@@ -2,10 +2,15 @@ package finki.ukim.mk.savingapp.web;
 
 import finki.ukim.mk.savingapp.model.Expense;
 import finki.ukim.mk.savingapp.model.BankAccount;
+import finki.ukim.mk.savingapp.model.User;
 import finki.ukim.mk.savingapp.service.ExpenseService;
 import finki.ukim.mk.savingapp.service.BankAccountService;
 import finki.ukim.mk.savingapp.model.enumeration.ExpenseCategory;
+import finki.ukim.mk.savingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +21,13 @@ import java.util.List;
 @Controller
 @RequestMapping("/expenses")
 public class ExpenseController {
-
+    private final UserService userService;
     private final ExpenseService expenseService;
     private final BankAccountService bankAccountService;
 
     @Autowired
-    public ExpenseController(ExpenseService expenseService, BankAccountService bankAccountService) {
+    public ExpenseController(UserService userService, ExpenseService expenseService, BankAccountService bankAccountService) {
+        this.userService = userService;
         this.expenseService = expenseService;
         this.bankAccountService = bankAccountService;
     }
@@ -58,6 +64,23 @@ public class ExpenseController {
                              @RequestParam LocalDate date,
                              @RequestParam String paymentMethod,
                              @RequestParam Long bankId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            username = userDetails.getUsername();
+        }
+
+        if (username != null) {
+            // Find the user by username (email)
+            User user = (User) userService.loadUserByUsername(username);
+            if (user != null) {
+                expenseService.create(name, amount, category, date, paymentMethod, bankId);
+                return "redirect:/bank-accounts";
+            }
+        }
+
         expenseService.create(name, amount, category, date, paymentMethod, bankId);
         return "redirect:/expenses";
     }

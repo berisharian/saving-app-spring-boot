@@ -1,9 +1,12 @@
 package finki.ukim.mk.savingapp.service.impl;
 
 import finki.ukim.mk.savingapp.model.SavingsTarget;
+import finki.ukim.mk.savingapp.model.User;
 import finki.ukim.mk.savingapp.model.enumeration.BudgetStatus;
 import finki.ukim.mk.savingapp.model.enumeration.SavingsPeriod;
+import finki.ukim.mk.savingapp.model.exception.UserNotFoundException;
 import finki.ukim.mk.savingapp.repository.SavingsTargetRepository;
+import finki.ukim.mk.savingapp.repository.UserRepository;
 import finki.ukim.mk.savingapp.service.SavingsTargetService;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +18,19 @@ import java.util.Optional;
 @Service
 public class SavingsTargetServiceImpl implements SavingsTargetService {
 
+    private final UserRepository userRepository;
     private final SavingsTargetRepository savingsTargetRepository;
 
-    public SavingsTargetServiceImpl(SavingsTargetRepository savingsTargetRepository) {
+    public SavingsTargetServiceImpl(UserRepository userRepository, SavingsTargetRepository savingsTargetRepository) {
+        this.userRepository = userRepository;
         this.savingsTargetRepository = savingsTargetRepository;
     }
 
     public SavingsTarget create(String name, Double currentAmount, Double targetAmount, Double savingAmount,
-                                SavingsPeriod savingsPeriod, String description, LocalDate dueDate) {
+                                SavingsPeriod savingsPeriod, String description, LocalDate dueDate, String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
         SavingsTarget savingsTarget = new SavingsTarget();
         savingsTarget.setName(name);
         savingsTarget.setCurrentAmount(currentAmount);
@@ -32,7 +40,8 @@ public class SavingsTargetServiceImpl implements SavingsTargetService {
         savingsTarget.setDescription(description);
         savingsTarget.setCreatedAt(LocalDateTime.now());
         savingsTarget.setDueDate(dueDate);
-        savingsTarget.setStatus(BudgetStatus.ACTIVE);
+        savingsTarget.setOwner(user);
+//        savingsTarget.setStatus(BudgetStatus.ACTIVE);
         return savingsTargetRepository.save(savingsTarget);
     }
 

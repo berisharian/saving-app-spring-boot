@@ -2,6 +2,9 @@ package finki.ukim.mk.savingapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class SavingAppApplication {
@@ -10,4 +13,8 @@ public class SavingAppApplication {
         SpringApplication.run(SavingAppApplication.class, args);
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }

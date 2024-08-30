@@ -16,7 +16,7 @@ public interface SavingsTargetService {
     void deleteById(Long id);
 
     SavingsTarget create(String name, Double currentAmount, Double targetAmount, Double savingAmount,
-                         SavingsPeriod savingsPeriod, String description, LocalDate dueDate);
+                         SavingsPeriod savingsPeriod, String description, LocalDate dueDate, String userId);
 
     SavingsTarget update(Long id, String name, Double currentAmount, Double targetAmount, Double savingAmount,
                          SavingsPeriod savingsPeriod, String description, LocalDate dueDate);
