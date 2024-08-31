@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Detail</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-<div class="container">
-  <h1 class="mt-4 mb-4">User Detail</h1>
+<div class="container mt-4">
+  <h1 class="mb-4">User Detail</h1>
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">User Information</h5>
@@ -20,18 +21,17 @@
         <dd class="col-sm-9" th:text="${user.surname}">Doe</dd>
 
         <dt class="col-sm-3">Email:</dt>
-        <dd class="col-sm-9" th:text="${user.email}">john.doe@example.com</dd>
+        <dd class="col-sm-9" th:text="${user.username}">john.doe@example.com</dd> <!-- Changed to 'username' based on your model -->
 
         <dt class="col-sm-3">Phone:</dt>
         <dd class="col-sm-9" th:text="${user.phone}">123-456-7890</dd>
 
         <dt class="col-sm-3">Birth Date:</dt>
-        <dd class="col-sm-9" th:text="${user.birthDate}">01-01-1990</dd>
+        <dd class="col-sm-9" th:text="${#dates.format(user.birthDate, 'yyyy-MM-dd')}">01-01-1990</dd> <!-- Format the date -->
       </dl>
       <a class="btn btn-primary" href="/users">Back to List</a>
     </div>
   </div>
 </div>
-
 </body>
 </html>

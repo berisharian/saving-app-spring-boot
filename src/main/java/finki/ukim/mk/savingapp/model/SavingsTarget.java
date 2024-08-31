@@ -41,6 +41,7 @@ public class SavingsTarget {
 
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
     private BudgetStatus status;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -49,20 +50,49 @@ public class SavingsTarget {
     private LocalDateTime updatedAt;
 
 
-    public BudgetStatus getStatus() {
+    public BudgetStatus getStatusBudget() {
         if (currentAmount > targetAmount){
-            return BudgetStatus.EXCEEDED;
-        }
-        if (currentAmount < targetAmount){
-            return BudgetStatus.ACTIVE;
-        }
-        return  BudgetStatus.COMPLETED;
+            status = BudgetStatus.EXCEEDED;
+        } else if (currentAmount < targetAmount){
+            status = BudgetStatus.ACTIVE;
+        } else
+            status =  BudgetStatus.COMPLETED;
+        return status;
     }
 
 
+//    public double getPeriodicalAmount(){
+//        LocalDateTime current = LocalDateTime.now();
+//
+//        Duration duration = Duration.between(createdAt, current);
+//
+//        long days = duration.toDays();
+//        long hours = duration.toHours() % 24;
+//        long minutes = duration.toMinutes() % 60;
+//        long seconds = duration.getSeconds() % 60;
+//
+//        if (SavingsPeriod.MINUTE.equals(savingsPeriod)) {
+//            return currentAmount + savingAmount * minutes;
+//        }
+//        if (SavingsPeriod.DAILY.equals(savingsPeriod)){
+//            return currentAmount + (savingAmount * days);
+//        }
+//        if (SavingsPeriod.MONTHLY.equals(savingsPeriod)){
+//            return currentAmount + (savingAmount * days/30);
+//        }
+//        return currentAmount;
+//    }
+    public void getStatusBudgetWithParam(double c) {
+        if (c > targetAmount){
+            status = BudgetStatus.EXCEEDED;
+        } else if (c < targetAmount){
+            status = BudgetStatus.ACTIVE;
+        } else
+            status =  BudgetStatus.COMPLETED;
+    }
+
     public double getPeriodicalAmount(){
         LocalDateTime current = LocalDateTime.now();
-
 
         Duration duration = Duration.between(createdAt, current);
 
@@ -71,22 +101,38 @@ public class SavingsTarget {
         long minutes = duration.toMinutes() % 60;
         long seconds = duration.getSeconds() % 60;
 
-//        if(currentAmount > targetAmount){
-//        }
-
         if (SavingsPeriod.MINUTE.equals(savingsPeriod)) {
-            return currentAmount + savingAmount * minutes;
-        }
+            double result = currentAmount + savingAmount * minutes;
+            getStatusBudgetWithParam(result);
+            return result;
+        } else
         if (SavingsPeriod.DAILY.equals(savingsPeriod)){
-            return currentAmount + (savingAmount * days);
+            double result = currentAmount + (savingAmount * days);
+            getStatusBudgetWithParam(result);
+            return result;
+        } else {
+            double result = currentAmount + (savingAmount * days/30);
+            getStatusBudgetWithParam(result);
+            return result;
         }
-
-        if (SavingsPeriod.MONTHLY.equals(savingsPeriod)){
-            return currentAmount + (savingAmount * days/30);
-        }
-
-        return currentAmount;
     }
+
+
+
+
+
+//    public void recalculateAndUpdateStatus() {
+//        // Calculate the new amount based on the period
+//        double updatedAmount = getPeriodicalAmount();
+//
+//        // Update currentAmount with the recalculated amount
+//        this.currentAmount = updatedAmount;
+//
+//        // Update the status based on the new amount
+//        this.status = getStatusBudget();
+//    }
+
+
 
 
 }

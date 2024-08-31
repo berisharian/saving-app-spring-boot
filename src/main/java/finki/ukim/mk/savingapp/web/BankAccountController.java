@@ -2,6 +2,7 @@ package finki.ukim.mk.savingapp.web;
 
 import finki.ukim.mk.savingapp.model.BankAccount;
 import finki.ukim.mk.savingapp.model.User;
+import finki.ukim.mk.savingapp.model.dto.BalanceDTO;
 import finki.ukim.mk.savingapp.service.BankAccountService;
 import finki.ukim.mk.savingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/bank-accounts")
@@ -61,7 +63,6 @@ public class BankAccountController {
         }
 
         if (username != null) {
-            // Find the user by username (email)
             User user = (User) userService.loadUserByUsername(username);
             if (user != null) {
                 bankAccountService.createBankAccount(name, balance, user.getUsername());
@@ -91,5 +92,18 @@ public class BankAccountController {
     public String deleteBankAccount(@PathVariable Long id) {
         bankAccountService.deleteBankAccount(id);
         return "redirect:/bank-accounts";
+    }
+
+
+    @GetMapping("/balance-graph")
+    public String getBankAccountChart(Model model) {
+        List<BankAccount> accounts = bankAccountService.findAll();
+        List<BalanceDTO> balances = accounts.stream()
+                .map(account -> new BalanceDTO(account.getName(), account.getBalance()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("balances", balances);
+        model.addAttribute("bodyContent", "bank-accounts/balance-graph");
+        return "master-template";
     }
 }

@@ -1,0 +1,189 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Budget Status Graph</title>-->
+<!--    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <script src="https://d3js.org/d3.v7.min.js"></script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container mt-5">-->
+<!--    <h2>Budget Status Overview</h2>-->
+<!--    <div id="statusGraph"></div>-->
+<!--</div>-->
+
+<!--<script th:inline="javascript">-->
+<!--    /*<![CDATA[*/-->
+<!--    const statusCounts = [[${statusCounts}]];-->
+<!--    const data = Object.keys(statusCounts).map(key => ({-->
+<!--        status: key,-->
+<!--        count: statusCounts[key]-->
+<!--    }));-->
+
+<!--    const margin = {top: 20, right: 30, bottom: 40, left: 40},-->
+<!--        width = 600 - margin.left - margin.right,-->
+<!--        height = 400 - margin.top - margin.bottom;-->
+
+<!--    const svg = d3.select("#statusGraph")-->
+<!--        .append("svg")-->
+<!--        .attr("width", width + margin.left + margin.right)-->
+<!--        .attr("height", height + margin.top + margin.bottom)-->
+<!--        .append("g")-->
+<!--        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");-->
+
+<!--    const x = d3.scaleBand()-->
+<!--        .domain(data.map(d => d.status))-->
+<!--        .range([0, width])-->
+<!--        .padding(0.1);-->
+
+<!--    svg.append("g")-->
+<!--        .attr("class", "x-axis")-->
+<!--        .attr("transform", "translate(0," + height + ")")-->
+<!--        .call(d3.axisBottom(x));-->
+
+<!--    const y = d3.scaleLinear()-->
+<!--        .domain([0, d3.max(data, d => d.count)])-->
+<!--        .nice()-->
+<!--        .range([height, 0]);-->
+
+<!--    svg.append("g")-->
+<!--        .attr("class", "y-axis")-->
+<!--        .call(d3.axisLeft(y));-->
+
+<!--    svg.selectAll(".bar")-->
+<!--        .data(data)-->
+<!--        .enter()-->
+<!--        .append("rect")-->
+<!--        .attr("class", "bar")-->
+<!--        .attr("x", d => x(d.status))-->
+<!--        .attr("y", d => y(d.count))-->
+<!--        .attr("width", x.bandwidth())-->
+<!--        .attr("height", d => height - y(d.count))-->
+<!--        .attr("fill", "steelblue");-->
+
+<!--    svg.selectAll(".label")-->
+<!--        .data(data)-->
+<!--        .enter()-->
+<!--        .append("text")-->
+<!--        .attr("class", "label")-->
+<!--        .attr("x", d => x(d.status) + x.bandwidth() / 2)-->
+<!--        .attr("y", d => y(d.count) - 5)-->
+<!--        .attr("text-anchor", "middle")-->
+<!--        .text(d => d.count);-->
+<!--    /*]]>*/-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Status Graph</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Budget Status Overview</h2>
+    <div id="statusGraph"></div>
+</div>
+
+<script>
+    const margin = {top: 20, right: 30, bottom: 40, left: 40},
+        width = 600 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    const svg = d3.select("#statusGraph")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    const x = d3.scaleBand()
+        .range([0, width])
+        .padding(0.1);
+
+    const y = d3.scaleLinear()
+        .nice()
+        .range([height, 0]);
+
+    function updateGraph(data) {
+        x.domain(data.map(d => d.status));
+        y.domain([0, d3.max(data, d => d.count)]);
+
+        svg.selectAll("*").remove();
+
+        svg.append("g")
+            .attr("class", "x-axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        svg.append("g")
+            .attr("class", "y-axis")
+            .call(d3.axisLeft(y));
+
+        svg.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.status))
+            .attr("y", d => y(d.count))
+            .attr("width", x.bandwidth())
+            .attr("height", d => height - y(d.count))
+            .attr("fill", "steelblue");
+
+        svg.selectAll(".label")
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("class", "label")
+            .attr("x", d => x(d.status) + x.bandwidth() / 2)
+            .attr("y", d => y(d.count) - 5)
+            .attr("text-anchor", "middle")
+            .text(d => d.count);
+    }
+
+
+    function fetchStatusData() {
+        fetch('/savings-targets/status-data')
+            .then(response => response.json())
+            .then(data => {
+                const statusCounts = Object.keys(data).map(key => ({
+                    status: key,
+                    count: data[key]
+                }));
+                updateGraph(statusCounts);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+
+    function fetchStatusData() {
+        fetch('/savings-targets/status-data')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Check if this contains updated counts
+                const statusCounts = Object.keys(data).map(key => ({
+                    status: key,
+                    count: data[key]
+                }));
+                console.log('Processed data:', statusCounts); // Verify data mapping
+                updateGraph(statusCounts);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    fetchStatusData();
+    setInterval(fetchStatusData, 60000);
+</script>
+</body>
+</html>
+
+

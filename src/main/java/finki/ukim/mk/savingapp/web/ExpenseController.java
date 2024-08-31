@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/expenses")
@@ -32,13 +33,35 @@ public class ExpenseController {
         this.bankAccountService = bankAccountService;
     }
 
+//    @GetMapping()
+//    public String showExpenses(Model model) {
+//        List<Expense> expenses = expenseService.findAll();
+//        model.addAttribute("expenses", expenses);
+//        model.addAttribute("bodyContent", "expenses/list");
+//        return "master-template";
+//    }
+
     @GetMapping()
     public String showExpenses(Model model) {
-        List<Expense> expenses = expenseService.findAll();
-        model.addAttribute("expenses", expenses);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            username = userDetails.getUsername();
+        }
+
+        if (username != null) {
+            User user = (User) userService.loadUserByUsername(username);
+            if (user != null) {
+                List<Expense> expenses = expenseService.findByUser(user);
+                model.addAttribute("expenses", expenses);
+            }
+        }
+
         model.addAttribute("bodyContent", "expenses/list");
         return "master-template";
     }
+
 
     @GetMapping("/details/{id}")
     public String showExpenseDetails(@PathVariable Long id, Model model) {
@@ -62,8 +85,7 @@ public class ExpenseController {
                              @RequestParam Double amount,
                              @RequestParam ExpenseCategory category,
                              @RequestParam LocalDate date,
-                             @RequestParam String paymentMethod,
-                             @RequestParam Long bankId) {
+                             @RequestParam String paymentMethod) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = null;
 
@@ -73,17 +95,17 @@ public class ExpenseController {
         }
 
         if (username != null) {
-            // Find the user by username (email)
             User user = (User) userService.loadUserByUsername(username);
             if (user != null) {
-                expenseService.create(name, amount, category, date, paymentMethod, bankId);
+                BankAccount bankAccount = bankAccountService.findByUser(user);
+                expenseService.create(name, amount, category, date, paymentMethod, bankAccount);
                 return "redirect:/bank-accounts";
             }
         }
 
-        expenseService.create(name, amount, category, date, paymentMethod, bankId);
         return "redirect:/expenses";
     }
+
 
     @GetMapping("/edit/{id}")
     public String editExpenseForm(@PathVariable Long id, Model model) {
@@ -112,5 +134,13 @@ public class ExpenseController {
     public String deleteExpense(@PathVariable Long id) {
         expenseService.deleteById(id);
         return "redirect:/expenses";
+    }
+
+    @GetMapping("/amount-graph")
+    public String showExpensesGraph(Model model) {
+        Map<String, Double> expensesMap = expenseService.getExpensesAsMap();
+        model.addAttribute("expensesMap", expensesMap);
+        model.addAttribute("bodyContent", "expenses/amount-graph");
+        return "master-template";
     }
 }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses Graph</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Expenses Over Time</h1>
+    <div id="chart"></div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const expensesMap = [[${expensesMap}]];
+
+    const data = Object.keys(expensesMap).map(key => ({
+        date: new Date(key), // Convert the date string back to a Date object
+        amount: expensesMap[key]
+    }));
+
+
+    console.log("Expenses Data:", data);
+
+
+    const margin = {top: 20, right: 30, bottom: 40, left: 50},
+        width = 800 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+
+    const svg = d3.select("#chart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+
+    const x = d3.scaleTime()
+        .domain(d3.extent(data, d => d.date))
+        .range([0, width]);
+
+
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.amount)])
+        .nice()
+        .range([height, 0]);
+
+    svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x).ticks(d3.timeDay.every(1)).tickFormat(d3.timeFormat("%Y-%m-%d")));
+
+
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+
+    svg.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 2)
+        .attr("d", d3.line()
+            .x(d => x(d.date))
+            .y(d => y(d.amount))
+        );
+
+    svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", d => x(d.date))
+        .attr("cy", d => y(d.amount))
+        .attr("r", 4)
+        .attr("fill", "red");
+    /*]]>*/
+</script>
+</body>
+</html>
+
+

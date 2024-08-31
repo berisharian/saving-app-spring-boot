@@ -36,7 +36,7 @@
                     <td th:text="${target.savingsPeriod}"></td>
                     <td th:text="${target.description}"></td>
                     <td th:text="${target.dueDate}"></td>
-                    <td th:text="${target.getStatus()}"></td>
+                    <td th:text="${target.status}"></td>
                     <td>
                         <a th:href="@{/savings-targets/details/{id}(id=${target.id})}" class="btn btn-info">Details</a>
                         <a th:href="@{/savings-targets/edit/{id}(id=${target.id})}" class="btn btn-warning">Edit</a>
@@ -47,6 +47,9 @@
                 </tr>
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end">
+                <a href="/savings-targets/status-graph" class="btn btn-secondary">View Status Graph</a>
+            </div>
         </div>
     </div>
 </div>

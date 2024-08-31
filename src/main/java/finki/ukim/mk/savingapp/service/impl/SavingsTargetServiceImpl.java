@@ -8,20 +8,29 @@ import finki.ukim.mk.savingapp.model.exception.UserNotFoundException;
 import finki.ukim.mk.savingapp.repository.SavingsTargetRepository;
 import finki.ukim.mk.savingapp.repository.UserRepository;
 import finki.ukim.mk.savingapp.service.SavingsTargetService;
+import finki.ukim.mk.savingapp.service.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SavingsTargetServiceImpl implements SavingsTargetService {
 
+    private final UserService userService;
     private final UserRepository userRepository;
     private final SavingsTargetRepository savingsTargetRepository;
 
-    public SavingsTargetServiceImpl(UserRepository userRepository, SavingsTargetRepository savingsTargetRepository) {
+    public SavingsTargetServiceImpl(UserService userService, UserRepository userRepository, SavingsTargetRepository savingsTargetRepository) {
+        this.userService = userService;
         this.userRepository = userRepository;
         this.savingsTargetRepository = savingsTargetRepository;
     }
@@ -41,7 +50,8 @@ public class SavingsTargetServiceImpl implements SavingsTargetService {
         savingsTarget.setCreatedAt(LocalDateTime.now());
         savingsTarget.setDueDate(dueDate);
         savingsTarget.setOwner(user);
-//        savingsTarget.setStatus(BudgetStatus.ACTIVE);
+        savingsTarget.setStatus(savingsTarget.getStatusBudget());
+
         return savingsTargetRepository.save(savingsTarget);
     }
 
@@ -62,6 +72,40 @@ public class SavingsTargetServiceImpl implements SavingsTargetService {
         savingsTarget.setDueDate(dueDate);
         savingsTarget.setUpdatedAt(LocalDateTime.now());
         return savingsTargetRepository.save(savingsTarget);
+    }
+
+//    @Override
+//    public Map<BudgetStatus, Long> countBudgetStatuses() {
+//        return savingsTargetRepository.findAll().stream()
+//                .collect(Collectors.groupingBy(SavingsTarget::getStatus, Collectors.counting()));
+//    }
+
+    @Override
+    public Map<BudgetStatus, Long> countBudgetStatuses() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            username = userDetails.getUsername();
+        }
+
+        if (username != null) {
+            User user = (User) userService.loadUserByUsername(username);
+            return savingsTargetRepository.findByOwner(user).stream()
+                    .collect(Collectors.groupingBy(SavingsTarget::getStatus, Collectors.counting()));
+        }
+
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public List<SavingsTarget> findAllByUser(User user) {
+        return savingsTargetRepository.findByOwner(user);
+    }
+
+    @Override
+    public List<SavingsTarget> findByUser(User user) {
+        return savingsTargetRepository.findByOwner(user);
     }
 
     public void deleteById(Long id) {

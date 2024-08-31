@@ -1,44 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Users</title>
+    <title>User Profile</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Users</h1>
-        <a href="/users/add" class="btn btn-primary">Add New User</a>
+    <h1>User Profile</h1>
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Username (Email):</dt>
+                <dd class="col-sm-9" th:text="${user.username}"></dd>
+
+                <dt class="col-sm-3">Name:</dt>
+                <dd class="col-sm-9" th:text="${user.name}"></dd>
+
+                <dt class="col-sm-3">Surname:</dt>
+                <dd class="col-sm-9" th:text="${user.surname}"></dd>
+
+                <dt class="col-sm-3">Phone:</dt>
+                <dd class="col-sm-9" th:text="${user.phone}"></dd>
+
+                <dt class="col-sm-3">Birth Date:</dt>
+                <dd class="col-sm-9" th:text="${user.birthDate}"></dd>
+            </dl>
+            <a th:href="@{/users/edit}" class="btn btn-warning">Edit Profile</a>
+        </div>
     </div>
-    <table class="table table-striped table-bordered">
-        <thead class="table-dark">
-        <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <th:block th:each="user : ${users}">
-            <tr>
-                <td th:text="${user.name}"></td>
-                <td th:text="${user.surname}"></td>
-                <td th:text="${user.email}"></td>
-                <td th:text="${user.phone}"></td>
-                <td>
-                    <a th:href="@{/users/details/{id}(id=${user.id})}" class="btn btn-info btn-sm">Details</a>
-                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-warning btn-sm">Edit</a>
-                    <form th:action="@{/users/delete/{id}(id=${user.id})}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-        </th:block>
-        </tbody>
-    </table>
 </div>
 </body>
 </html>

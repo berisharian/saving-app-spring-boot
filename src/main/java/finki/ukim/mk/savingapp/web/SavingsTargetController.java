@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -31,9 +34,31 @@ public class SavingsTargetController {
         this.savingsTargetService = savingsTargetService;
     }
 
+//    @GetMapping()
+//    public String showSavingsTargets(Model model) {
+//        model.addAttribute("savingsTargets", savingsTargetService.findAll());
+//        model.addAttribute("bodyContent", "savings-targets/list");
+//        return "master-template";
+//    }
+
+
     @GetMapping()
     public String showSavingsTargets(Model model) {
-        model.addAttribute("savingsTargets", savingsTargetService.findAll());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            username = userDetails.getUsername();
+        }
+
+        if (username != null) {
+            User user = (User) userService.loadUserByUsername(username);
+            if (user != null) {
+                List<SavingsTarget> savingsTargets = savingsTargetService.findByUser(user);
+                model.addAttribute("savingsTargets", savingsTargets);
+            }
+        }
+
         model.addAttribute("bodyContent", "savings-targets/list");
         return "master-template";
     }
@@ -112,4 +137,19 @@ public class SavingsTargetController {
         savingsTargetService.deleteById(id);
         return "redirect:/savings-targets";
     }
+
+    @GetMapping("/status-graph")
+    public String getStatusGraph(Model model) {
+        Map<BudgetStatus, Long> statusCounts = savingsTargetService.countBudgetStatuses();
+        model.addAttribute("statusCounts", statusCounts);
+        model.addAttribute("bodyContent", "savings-targets/status-graph");
+        return "master-template";
+    }
+
+    @GetMapping("/status-data")
+    @ResponseBody
+    public Map<BudgetStatus, Long> getStatusData() {
+        return savingsTargetService.countBudgetStatuses();
+    }
+
 }

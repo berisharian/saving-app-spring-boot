@@ -17,7 +17,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="amount" class="form-label">Amount</label>
-                    <input type="number" step="0.01" id="amount" name="amount" class="form-control" th:value="${expense?.amount}" required>
+                    <input type="number" step="0.01" id="amount" name="amount" class="form-control" th:value="${expense?.amount}"  th:readonly="${expense != null}">
                 </div>
                 <div class="mb-3">
                     <label for="category" class="form-label">Category</label>
@@ -33,12 +33,12 @@
                     <label for="paymentMethod" class="form-label">Payment Method</label>
                     <input type="text" id="paymentMethod" name="paymentMethod" class="form-control" th:value="${expense?.paymentMethod}" required>
                 </div>
-                <div class="mb-3">
-                    <label for="bankId" class="form-label">Bank Account</label>
-                    <select id="bankId" name="bankId" class="form-select" required>
-                        <option th:each="account : ${bankAccounts}" th:value="${account.id}" th:text="${account.name}"></option>
-                    </select>
-                </div>
+<!--                <div class="mb-3">-->
+<!--                    <label for="bankId" class="form-label">Bank Account</label>-->
+<!--                    <select id="bankId" name="bankId" class="form-select" required>-->
+<!--                        <option th:each="account : ${bankAccounts}" th:value="${account.id}" th:text="${account.name}"></option>-->
+<!--                    </select>-->
+<!--                </div>-->
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary">Submit</button>
                     <a href="/expenses" class="btn btn-secondary">Cancel</a>

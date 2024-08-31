@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(String username, String password, String name, String surname, String phone) {
+    public User register(String username, String name, String surname, String password, String phone) {
         if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
             throw new RuntimeException("Bad Credentials");
         }
@@ -45,7 +45,28 @@ public class UserServiceImpl implements UserService {
                 null
         );
 
+
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findById(username).orElse(null);
+    }
+
+    @Override
+    public void updateUser(String username, User updatedUser) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setName(updatedUser.getName());
+        user.setSurname(updatedUser.getSurname());
+        user.setPhone(updatedUser.getPhone());
+        user.setBirthDate(updatedUser.getBirthDate());
+        userRepository.save(user);
     }
 
     @Override
